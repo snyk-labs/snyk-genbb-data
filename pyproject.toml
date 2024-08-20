@@ -8,7 +8,10 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 typer = "^0.12.3"
+requests = "^2.32.3"
 
+[tool.poetry.scripts]
+snyk-genbb-data = "snyk-genbb-data.src:run"
 
 [build-system]
 requires = ["poetry-core"]

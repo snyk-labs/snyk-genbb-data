@@ -1,12 +1,25 @@
 import typer
 import requests
 import json
+import os
 
 app = typer.Typer()
 
 @app.command()
 def test():
     print(f"Testing application. It works!")
+
+@app.command()
+def run(workspace: str, org_id: str, integration_id: str):
+    username = os.getenv("BITBUCKET_CLOUD_USERNAME")
+    app_password = os.getenv("BITBUCKET_CLOUD_PASSWORD")
+    
+    all_repos = get_projects_and_repos(username, app_password, workspace)
+
+    import_object = generate_import_structure(all_repos, workspace, org_id, integration_id)
+
+    with open("bitbucket_import_data.json", "w") as f:
+        json.dump(import_object, f, indent=2)
 
 def get_projects_and_repos(username, app_password, workspace):
     """Fetches all projects and repositories from a Bitbucket workspace and returns them as a list of dictionaries.
@@ -20,61 +33,66 @@ def get_projects_and_repos(username, app_password, workspace):
         list: A list of dictionaries, each containing project and repository information.
     """
 
-    base_url = f"https://api.bitbucket.org/2.0/workspaces/{workspace}"
+    base_url = "https://api.bitbucket.org/2.0/"
+
     auth = (username, app_password)
     headers = {"Accept": "application/json"}
 
-    projects = []
+    repos_url = f"{base_url}/repositories/{workspace}"
     next_page = None
 
+    all_repos = []
+
     while True:
-        url = f"{base_url}/projects"
+        url = repos_url
         if next_page:
             url += f"?next={next_page}"
 
         response = requests.get(url, auth=auth, headers=headers)
-        response.raise_for_status()
+        
+        if response.status_code != 200:
+            print(f"Expected status code 200, received {response.status_code}")
 
         data = response.json()
-        projects.extend(data["values"])
+        all_repos.extend(data["values"])
 
         next_page = data.get("next")
         if not next_page:
             break
 
-    all_repos = []
-    for project in projects:
-        project_key = project["key"]
-        repos_url = f"{base_url}/projects/{project_key}/repos"
-        next_page = None
-
-        while True:
-            url = repos_url
-            if next_page:
-                url += f"?next={next_page}"
-
-            response = requests.get(url, auth=auth, headers=headers)
-            response.raise_for_status()
-
-            data = response.json()
-            all_repos.extend(data["values"])
-
-            next_page = data.get("next")
-            if not next_page:
-                break
-
     return all_repos
 
-@app.command()
-def run():
-    username = "your_username"
-    app_password = "your_app_password"
-    workspace = "your_workspace"
+def generate_import_structure(repos, workspace, orgId, integrationId, files=[], exclusionGlobs = ""):
 
-    all_repos = get_projects_and_repos(username, app_password, workspace)
+    targets = []
 
-    with open("bitbucket_data.json", "w") as f:
-        json.dump(all_repos, f, indent=2)
+    for repo in repos:
+        name = repo["name"]
+        branch = repo["mainbranch"]["name"]
+
+        target = {
+            "orgId": orgId,
+            "integrationId": integrationId,
+            "target": {
+                "owner": workspace,
+                "name": name,
+                "branch": branch
+            }
+        }
+
+        if len(files) > 0:
+            target["files"] = files
+        
+        if len(exclusionGlobs) > 0:
+            target["exclusionGlobs"] = exclusionGlobs
+
+        targets.append(target)
+    
+    import_object = {
+        "targets": targets
+    }
+
+    return import_object
 
 if __name__ == "__main__":
     app()
