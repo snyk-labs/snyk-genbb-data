@@ -13,6 +13,13 @@ org_id: ID of Snyk Organization to be mapped to.
 
 integration_id: ID of Snyk Bitbucket integration.
 
+### Authentication Environment Variables
+
+These environment variables need to be set when executing the script to authenticate with Bitbucket
+
+BITBUCKET_CLOUD_USERNAME - User account to access the APIs.
+BITBUCKET_CLOUD_PASSWORD - Password for user.
+
 ### Output
 
 An import targets JSON file that can be directly fed to Snyk API Import Tool to import all repositories in the Bitbucket Workspace into a Snyk Org.
