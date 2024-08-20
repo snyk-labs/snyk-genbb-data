@@ -1,6 +1,6 @@
-# Overview
+# Bitbucket scanner
 
-This repository may be used as a starting point for Python applications using Poetry for dependency management and Typer for CLI implementation.
+This application is to read all the projects and repos in Bitbucket server and generate a json that can be used for API-import tool to import the projects to Snyk
 
 ## Running
 To run, install the dependencies using `poetry install`, and execute `poetry run python src/main.py`
