@@ -38,7 +38,7 @@ def get_projects_and_repos(username, app_password, workspace):
 
     auth = (username, app_password)
     """
-    headers = {"Authorization": f"Bearer {user_token}"}
+    headers = {"Authorization": f"Bearer {user_token}","Accept": "application/json"}
     """
     headers = {"Accept": "application/json"}
 

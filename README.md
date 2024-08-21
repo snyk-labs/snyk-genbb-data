@@ -23,3 +23,4 @@ BITBUCKET_CLOUD_PASSWORD - Password for user.
 ### Output
 
 An import targets JSON file that can be directly fed to Snyk API Import Tool to import all repositories in the Bitbucket Workspace into a Snyk Org.
+
