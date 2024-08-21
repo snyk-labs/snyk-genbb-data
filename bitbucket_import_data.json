@@ -1,0 +1,22 @@
+{
+  "targets": [
+    {
+      "orgId": "myordid",
+      "integrationId": "myintegrationid",
+      "target": {
+        "owner": "bbhtqtest1",
+        "name": "testrepo1",
+        "branch": "master"
+      }
+    },
+    {
+      "orgId": "myordid",
+      "integrationId": "myintegrationid",
+      "target": {
+        "owner": "bbhtqtest1",
+        "name": "testrepo2",
+        "branch": "master"
+      }
+    }
+  ]
+}

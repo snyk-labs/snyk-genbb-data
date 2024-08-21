@@ -13,6 +13,7 @@ def test():
 def run(workspace: str, org_id: str, integration_id: str):
     username = os.getenv("BITBUCKET_CLOUD_USERNAME")
     app_password = os.getenv("BITBUCKET_CLOUD_PASSWORD")
+    bb_token = os.getenv("BITBUCKET_SERVER_TOKEN")
     
     all_repos = get_projects_and_repos(username, app_password, workspace)
 
@@ -36,6 +37,9 @@ def get_projects_and_repos(username, app_password, workspace):
     base_url = "https://api.bitbucket.org/2.0/"
 
     auth = (username, app_password)
+    """
+    headers = {"Authorization": f"Bearer {user_token}"}
+    """
     headers = {"Accept": "application/json"}
 
     repos_url = f"{base_url}/repositories/{workspace}"
