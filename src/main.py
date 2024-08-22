@@ -6,6 +6,8 @@ import os
 from bitbucket_cloud import BitbucketCloud
 from bitbucket_server import BitbucketServer
 
+from typing_extensions import Annotated
+
 app = typer.Typer()
 
 @app.command()
@@ -26,15 +28,20 @@ def run_bb_cloud(workspace: str, org_id: str, integration_id: str):
     with open("bitbucket_cloud_import_data.json", "w") as f:
         json.dump(import_object, f, indent=2)
 
-def run_bb_server(workspace: str, org_id: str, integration_id: str):
+def run_bb_server(workspace: str, org_id: str, integration_id: str, project_key: Annotated[str, typer.Argument()] = ""):
     username = os.getenv("BITBUCKET_CLOUD_USERNAME")
     app_password = os.getenv("BITBUCKET_CLOUD_PASSWORD")
 
     bb_server = BitbucketServer(username=username, app_password=app_password)
     
-    all_repos = bb_server.get_all_repos()
+    repos = []
 
-    import_object = bb_server.generate_import_structure(all_repos, workspace, org_id, integration_id)
+    if project_key == "":
+        repos = bb_server.get_repos(project_key)
+    else:
+        repos = bb_server.get_all_repos()
+
+    import_object = bb_server.generate_import_structure(repos, workspace, org_id, integration_id)
 
     with open("bitbucket_server_import_data.json", "w") as f:
         json.dump(import_object, f, indent=2)
