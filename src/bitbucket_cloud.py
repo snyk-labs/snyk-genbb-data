@@ -1,12 +1,21 @@
 import requests
 
 class BitbucketCloud:
-    username = ""
-    app_password = ""
+    auth = {}
 
-    def __init__(self, username, app_password):
-        self.username = username
-        self.app_password = app_password
+    def __init__(self, username="", app_password="", token=""):
+        if username != "" and app_password != "":
+            self.set_auth_username_pw(username, app_password)
+        else:
+            self.set_auth_token(token)
+
+    def set_auth_username_pw(self, username, app_password):
+        self.auth = {
+            username, app_password
+        }
+
+    def set_auth_token(self, token):
+        self.auth = {"Authorization": f"Bearer {token}"}    
 
     def get_projects_and_repos(self, workspace):
         """Fetches all projects and repositories from a Bitbucket workspace and returns them as a list of dictionaries.
@@ -22,7 +31,6 @@ class BitbucketCloud:
 
         base_url = "https://api.bitbucket.org/2.0/"
 
-        auth = (self.username, self.app_password)
         headers = {"Accept": "application/json"}
 
         repos_url = f"{base_url}/repositories/{workspace}"
@@ -35,7 +43,7 @@ class BitbucketCloud:
             if next_page:
                 url += f"?next={next_page}"
 
-            response = requests.get(url, auth=auth, headers=headers)
+            response = requests.get(url, auth=self.auth, headers=headers)
             
             if response.status_code != 200:
                 print(f"Expected status code 200, received {response.status_code}")

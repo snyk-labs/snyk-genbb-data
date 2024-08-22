@@ -5,11 +5,21 @@ class BitbucketServer:
 
     auth = {}
 
-    def __init__(self, tenant, username, app_password):
+    def __init__(self, tenant, username="", app_password="", token=""):
         self.base_url = f"https://bitbucket.{tenant}.com/rest/api/1.0/"
 
-        self.auth.username = {username, app_password}
-        pass
+        if username != "" and app_password != "":
+            self.set_auth_username_pw(username, app_password)
+        else:
+            self.set_auth_token(token)
+
+    def set_auth_username_pw(self, username, app_password):
+        self.auth = {
+            username, app_password
+        }
+
+    def set_auth_token(self, token):
+        self.auth = {"Authorization": f"Bearer {token}"}    
     
     def get_projects(self):
         url = self.base_url + "api/latest/projects"
