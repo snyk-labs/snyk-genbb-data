@@ -10,9 +10,9 @@ class BitbucketCloud:
             self.set_auth_token(token)
 
     def set_auth_username_pw(self, username, app_password):
-        self.auth = {
+        self.auth = (
             username, app_password
-        }
+        )
 
     def set_auth_token(self, token):
         self.auth = {"Authorization": f"Bearer {token}"}    

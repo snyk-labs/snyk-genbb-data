@@ -47,7 +47,7 @@ class BitbucketServer:
 
             all_projects.extend(projects)
 
-            params("start") += limit
+            params["start"] += limit
 
             last_page = data["isLastPage"]
 

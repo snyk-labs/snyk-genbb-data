@@ -11,7 +11,7 @@
             "cwd": "${workspaceFolder}/src/",
             "module": "main",
             "console": "integratedTerminal",
-            "args": ["run", "<workspace>", "<org id>", "<integration id>"]
+            "args": ["cloud", "<workspace>", "<org id>", "<integration id>"]
         }
     ]
 }

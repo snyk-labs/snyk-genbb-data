@@ -15,20 +15,21 @@ def test():
     print(f"Testing application. It works!")
 
 @app.command()
-def run_bb_cloud(workspace: str, org_id: str, integration_id: str):
+def cloud(workspace: str, org_id: str, integration_id: str):
     username = os.getenv("BITBUCKET_CLOUD_USERNAME")
     app_password = os.getenv("BITBUCKET_CLOUD_PASSWORD")
 
     bb_cloud = BitbucketCloud(username=username, app_password=app_password)
     
-    all_repos = bb_cloud.get_projects_and_repos(username, app_password, workspace)
+    all_repos = bb_cloud.get_projects_and_repos(workspace)
 
     import_object = bb_cloud.generate_import_structure(all_repos, workspace, org_id, integration_id)
 
     with open("bitbucket_cloud_import_data.json", "w") as f:
         json.dump(import_object, f, indent=2)
 
-def run_bb_server(workspace: str, org_id: str, integration_id: str, project_key: Annotated[str, typer.Argument()] = ""):
+@app.command()
+def server(workspace: str, org_id: str, integration_id: str, project_key: Annotated[str, typer.Argument()] = ""):
     username = os.getenv("BITBUCKET_CLOUD_USERNAME")
     app_password = os.getenv("BITBUCKET_CLOUD_PASSWORD")
 
