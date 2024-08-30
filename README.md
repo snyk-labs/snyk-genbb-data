@@ -5,6 +5,9 @@ This application is to read all the projects and repos in Bitbucket server and g
 ## Running
 To run, install the dependencies using `poetry install`, and execute `poetry run python src/main.py <args>`
 
+For Bitbucker Server; 
+`poetry run python src/main.py server <args>`
+
 ### Arguments
 
 workspace: Bitbucket Workspace to be mapped to Snyk Organization.
@@ -19,6 +22,10 @@ These environment variables need to be set when executing the script to authenti
 
 BITBUCKET_CLOUD_USERNAME - User account to access the APIs.
 BITBUCKET_CLOUD_PASSWORD - Password for user.
+
+For Bitbucket Server use;
+BITBUCKET_HOSTURL - Your Bitbucket url only
+BITBUCKET_SERVER_TOKEN - Your Bibucket Server token
 
 ### Output
 

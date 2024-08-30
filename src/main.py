@@ -6,8 +6,6 @@ import os
 from bitbucket_cloud import BitbucketCloud
 from bitbucket_server import BitbucketServer
 
-from typing_extensions import Annotated
-
 app = typer.Typer()
 
 @app.command()
@@ -29,23 +27,27 @@ def cloud(workspace: str, org_id: str, integration_id: str):
         json.dump(import_object, f, indent=2)
 
 @app.command()
-def server(workspace: str, org_id: str, integration_id: str, project_key: Annotated[str, typer.Argument()] = ""):
-    username = os.getenv("BITBUCKET_CLOUD_USERNAME")
-    app_password = os.getenv("BITBUCKET_CLOUD_PASSWORD")
+def server(org_id: str, integration_id: str):
+    bitbucketurl =  os.getenv("BITBUCKET_HOSTURL")
+    token = os.getenv("BITBUCKET_SERVER_TOKEN")
 
-    bb_server = BitbucketServer(username=username, app_password=app_password)
+    bb_server = BitbucketServer(bitbucketurl=bitbucketurl, token=token)
     
-    repos = []
+    """
+    project_key = bb_server.get_all_projects()
 
-    if project_key == "":
-        repos = bb_server.get_repos(project_key)
-    else:
-        repos = bb_server.get_all_repos()
+    print(repos)"""
 
-    import_object = bb_server.generate_import_structure(repos, workspace, org_id, integration_id)
+    repos = bb_server.get_all_repos()
+    print(repos)
+
+    """
+    import_object = bb_server.generate_import_structure(repos, org_id, integration_id)
 
     with open("bitbucket_server_import_data.json", "w") as f:
         json.dump(import_object, f, indent=2)
+    """
+
 
 if __name__ == "__main__":
     app()

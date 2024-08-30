@@ -3,28 +3,21 @@ import requests
 class BitbucketServer:
     base_url = ""
 
-    auth = {}
+    headers = {}
 
-    def __init__(self, tenant, username="", app_password="", token=""):
-        self.base_url = f"https://bitbucket.{tenant}.com/rest/api/1.0/"
+    def __init__(self, username="", app_password="", bitbucketurl="", token=""):
+        self.base_url = f"{bitbucketurl}rest/api/1.0/"
+        self.set_auth_token(token)
 
-        if username != "" and app_password != "":
-            self.set_auth_username_pw(username, app_password)
-        else:
-            self.set_auth_token(token)
-
-    def set_auth_username_pw(self, username, app_password):
-        self.auth = {
-            username, app_password
-        }
 
     def set_auth_token(self, token):
-        self.auth = {"Authorization": f"Bearer {token}"}    
+        self.headers = {"content-type": "application/json",
+                     "Authorization": f"Bearer {token}"}
     
     def get_projects(self):
-        url = self.base_url + "api/latest/projects"
+        url = f"{self.base_url}projects"
 
-        headers = {"Accept": "application/json"}
+        headers = self.headers
 
         last_page = False
         start = 0
@@ -32,11 +25,13 @@ class BitbucketServer:
 
         params = {"start": start, "limit":limit}
 
+        print(url)
+
         all_projects = []
 
         while not last_page:
             
-            response = requests.get(url, params=params, auth=self.auth, headers=headers)
+            response = requests.get(url, params=params, headers=headers)
 
             if response.status_code != 200:
                 print(f"Expected status code 200, received {response.status_code}")
@@ -55,9 +50,9 @@ class BitbucketServer:
 
 
     def get_repos(self, project_key):
-        url = self.base_url + f"api/latest/projects/{project_key}/repos"
+        url = f"{self.base_url}projects/{project_key}/repos"
 
-        headers = {"Accept": "application/json"}
+        headers = self.headers
 
         last_page = False
         start = 0
@@ -69,7 +64,7 @@ class BitbucketServer:
 
         while not last_page:
 
-            response = requests.get(url, params=params, auth=self.auth, headers=headers)
+            response = requests.get(url, params=params, headers=headers)
 
             if response.status_code != 200:
                 print(f"Expected status code 200, received {response.status_code}")
@@ -79,20 +74,24 @@ class BitbucketServer:
             repos = data.get("values")
             
             all_repos.extend(repos)
+            last_page = data["isLastPage"]
 
         return all_repos
 
     def get_all_repos(self):
-        projects = self.get_projects
+        print("Fetching all Projects")
+        projects = self.get_projects()
 
         all_repos = []
 
+        print("Fetching all Repos")
         for project in projects:
-            project_key = project("key")
+            project_key = project["key"]
 
             repos = self.get_repos(project_key=project_key)
 
             all_repos.extend(repos)
+            
 
         return all_repos
 
