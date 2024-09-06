@@ -39,7 +39,8 @@ def server(org_id: str, integration_id: str):
     print(repos)"""
 
     repos = bb_server.get_all_repos()
-    print(repos)
+    with open("bitbucket_server_sample_data.json", "w") as f:
+        json.dump(repos, f, indent=2)
 
     """
     import_object = bb_server.generate_import_structure(repos, org_id, integration_id)

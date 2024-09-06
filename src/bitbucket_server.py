@@ -82,6 +82,8 @@ class BitbucketServer:
         print("Fetching all Projects")
         projects = self.get_projects()
 
+        print(f"Found {len(projects)} projects")
+
         all_repos = []
 
         print("Fetching all Repos")
@@ -91,6 +93,8 @@ class BitbucketServer:
             repos = self.get_repos(project_key=project_key)
 
             all_repos.extend(repos)
+            break
+
             
 
         return all_repos
