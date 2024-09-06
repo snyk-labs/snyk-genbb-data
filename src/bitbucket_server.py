@@ -87,13 +87,16 @@ class BitbucketServer:
         all_repos = []
 
         print("Fetching all Repos")
+        numberofProjects = 0
         for project in projects:
             project_key = project["key"]
 
             repos = self.get_repos(project_key=project_key)
 
             all_repos.extend(repos)
-            break
+            numberofProjects+=1
+            if numberofProjects == 5:
+                break
 
             
 
