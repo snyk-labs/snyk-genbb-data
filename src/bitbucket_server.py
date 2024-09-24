@@ -25,8 +25,6 @@ class BitbucketServer:
 
         params = {"start": start, "limit":limit}
 
-        print(url)
-
         all_projects = []
 
         while not last_page:
@@ -37,6 +35,7 @@ class BitbucketServer:
                 print(f"Expected status code 200, received {response.status_code}")
             
             data = response.json()
+            print(data)
 
             projects = data.get("values")
 
@@ -47,6 +46,19 @@ class BitbucketServer:
             last_page = data["isLastPage"]
 
         return all_projects
+
+    def get_repodetails(self, project_key, repo_key):
+        url = f"{self.base_url}projects/{project_key}/repos/{repo_key}"
+
+        headers = self.headers
+        response = requests.get(url,  headers=headers)  # Replace with your credentials
+
+        if response.status_code != 200:
+            print(f"Expected status code 200, received {response.status_code}")
+            return 
+        
+        data = response.json()
+        return data
 
 
     def get_repos(self, project_key):
@@ -71,11 +83,15 @@ class BitbucketServer:
             
             data = response.json()
 
-            repos = data.get("values")
-            
-            all_repos.extend(repos)
-            last_page = data["isLastPage"]
+            for repo in data["values"]:
+                repo_key = repo["slug"]
 
+                repo_details = self.get_repodetails(project_key, repo_key)
+                all_repos.extend(repo_details)
+
+            last_page = data["isLastPage"]
+            
+    
         return all_repos
 
     def get_all_repos(self):
