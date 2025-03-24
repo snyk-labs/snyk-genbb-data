@@ -1,5 +1,7 @@
 # Bitbucket scanner
 
+Status: Working Progress
+
 This application is to read all the projects and repos in Bitbucket server and generate a json that can be used for API-import tool to import the projects to Snyk
 
 ## Running
